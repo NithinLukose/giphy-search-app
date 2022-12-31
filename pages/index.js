@@ -1,65 +1,43 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import GIFContainer from "../common/components/molecule/Trending";
 
-export default function Home(initialData) {
-  const [formInputs, setFormInputs] = useState();
-  const [searchTerm, setSearchTerm] = useState("cats");
-  const [searchResults, setSearchResults] = useState([]);
-
-  useEffect(() => {
-    setSearchResults(initialData.catGiphys.data);
-  }, [initialData]);
-
-  const handleInputs = (event) => {
-    let { name, value } = event.target;
-    setFormInputs({ ...formInputs, [name]: value });
-  };
-
-  const search = async (event) => {
-    event.preventDefault();
-    let giphys = await fetch(
-      `https://api.giphy.com/v1/gifs/search?q=${formInputs.searchTerm}&api_key=qOs5aDoMpWCw3TETNjHr9eQlw8WZ0ssa&limit=6`
-    );
-    giphys = await giphys.json();
-    setSearchResults(giphys.data);
-    setSearchTerm(formInputs.searchTerm);
-  };
-
+export default function Home({ trendingGIFs, trendingCats }) {
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="stylesheet" href="/styles.css" />
+        <title>Giphy</title>
       </Head>
-
-      <h1>Giphy Search App</h1>
-
-      <form onSubmit={search}>
-        <input name="searchTerm" onChange={handleInputs} type="text" required />
-        <button>Search</button>
-      </form>
-
-      <h1>Search results for: {searchTerm}</h1>
-
-      <div className="giphy-search-results-grid">
-        {searchResults.map((each, index) => {
-          return (
-            <div key={index}>
-              <h3>{each.title}</h3>
-              <img src={each.images.original.url} alt={each.title} />
-            </div>
-          );
-        })}
+      <div className="header">
+        <h1>Giphy</h1>
+        <div>
+          <input />
+        </div>
       </div>
+      <GIFContainer gifs={trendingGIFs.data} title="Trending" />
+      <GIFContainer gifs={trendingCats.data} title="Cats" />
     </div>
   );
 }
 
-export async function getStaticProps() {
-  let catGiphys = await fetch(
-    "https://api.giphy.com/v1/gifs/search?q=cats&api_key=qOs5aDoMpWCw3TETNjHr9eQlw8WZ0ssa&limit=6"
-  );
-  catGiphys = await catGiphys.json();
-  return { props: { catGiphys: catGiphys } };
+// export async function getStaticProps() {
+//   let catGiphys = await fetch(
+//     "https://api.giphy.com/v1/gifs/search?q=cats&api_key=qOs5aDoMpWCw3TETNjHr9eQlw8WZ0ssa&limit=6"
+//   );
+//   catGiphys = await catGiphys.json();
+//   return { props: { catGiphys: catGiphys } };
+// }
+
+export async function getServerSideProps() {
+  const trendingGIFs = await fetch(
+    "https://api.giphy.com/v1/gifs/trending?api_key=qOs5aDoMpWCw3TETNjHr9eQlw8WZ0ssa&limit=6"
+  ).then((response) => response.json());
+  const trendingCats = await fetch(
+    "https://api.giphy.com/v1/gifs/search?api_key=qOs5aDoMpWCw3TETNjHr9eQlw8WZ0ssa&limit=6&q=cats"
+  ).then((response) => response.json());
+  return {
+    props: {
+      trendingGIFs,
+      trendingCats,
+    },
+  };
 }
