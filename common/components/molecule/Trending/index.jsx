@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import styles from "./styles.module.css";
 
@@ -14,7 +15,14 @@ function GIFContainer({ gifs = [], title }) {
                 alt={gif.title}
                 className={styles.img}
               />
-              <p>{gif.title}</p>
+              <Link
+                href={{
+                  pathname: `/search/${gif.title}`,
+                  query: { gifId: gif.id },
+                }}
+              >
+                <p>{gif.title}</p>
+              </Link>
             </div>
           ))}
       </div>
