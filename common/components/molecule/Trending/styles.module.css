@@ -7,6 +7,8 @@
   padding: 0 1rem;
   width: 17rem;
   margin: 0 1rem;
+  position: relative;
+  height: 25rem;
 }
 
 .img {

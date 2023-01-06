@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import styles from "./styles.module.css";
@@ -10,10 +11,10 @@ function GIFContainer({ gifs = [], title }) {
         {gifs.length > 0 &&
           gifs.map((gif) => (
             <div key={gif.id} className={styles.gif_item}>
-              <img
+              <Image
                 src={gif.images.original.url}
                 alt={gif.title}
-                className={styles.img}
+                layout="fill"
               />
               <Link
                 href={{
